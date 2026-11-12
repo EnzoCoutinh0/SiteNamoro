@@ -9,6 +9,8 @@
     const reduzirMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const plural = (n, um, varios) => `${n.toLocaleString("pt-BR")} ${n === 1 ? um : varios}`;
     const DIA = 86400000;
+    // Aparelhos mais fracos ou telas pequenas recebem menos partículas
+    const modoLeve = (navigator.hardwareConcurrency || 8) <= 4 || window.innerWidth < 600;
 
     function criar(tag, props = {}, filhos = []) {
         const el = document.createElement(tag);
@@ -1039,8 +1041,10 @@
     const simbolos = ["❤", "❤", "❤", "💗", "💕", "💖"];
     const cores = ["#ff4d6d", "#ff758f", "#c9184a", "#ff8fa3", "#ffb3c1"];
 
+    const MAX_CORACOES = modoLeve ? 14 : 24;
+
     function criarCoracao() {
-        if (document.hidden) return;
+        if (document.hidden || camada.childElementCount >= MAX_CORACOES) return;
         const tamanho = Math.random() * 18 + 10;
         const duracao = Math.random() * 4 + 5;
         const dentro = criar("i", { text: sorteio(simbolos) });
@@ -1051,7 +1055,7 @@
         coracao.style.fontSize = tamanho + "px";
         coracao.style.color = sorteio(cores);
         coracao.style.opacity = (Math.random() * 0.5 + 0.4).toFixed(2);
-        coracao.style.filter = `drop-shadow(0 0 ${tamanho / 2}px rgba(255, 77, 109, .7))`;
+        coracao.style.textShadow = `0 0 ${Math.round(tamanho / 2)}px rgba(255, 77, 109, .7)`;
         coracao.style.animationDuration = duracao + "s";
         coracao.style.setProperty("--giro", (Math.random() * 120 - 60) + "deg");
 
@@ -1061,7 +1065,7 @@
 
     function estourar(x, y) {
         if (reduzirMovimento) return;
-        const quantidade = 12;
+        const quantidade = modoLeve ? 8 : 12;
         for (let i = 0; i < quantidade; i++) {
             const angulo = (Math.PI * 2 * i) / quantidade + Math.random() * 0.4;
             const distancia = Math.random() * 60 + 50;
@@ -1090,17 +1094,24 @@
 
     function montarFundo() {
         const fundo = $("#fundo");
-        for (let i = 0; i < 70; i++) {
-            const estrela = criar("span", { class: "estrela" });
-            estrela.style.left = Math.random() * 100 + "%";
-            estrela.style.top = Math.random() * 100 + "%";
-            estrela.style.animationDuration = (Math.random() * 3 + 2) + "s";
-            estrela.style.animationDelay = (-Math.random() * 5) + "s";
-            if (Math.random() < 0.2) estrela.style.width = estrela.style.height = "3px";
-            fundo.append(estrela);
+        // Estrelas: 2 grupos desenhados com box-shadow, cada grupo pisca junto
+        const largura = window.innerWidth;
+        const altura = window.innerHeight;
+        const porGrupo = modoLeve ? 20 : 35;
+        for (let g = 0; g < 2; g++) {
+            const pontos = [];
+            for (let i = 0; i < porGrupo; i++) {
+                const tamanho = Math.random() < 0.2 ? 1 : 0;
+                pontos.push(`${Math.round(Math.random() * largura)}px ${Math.round(Math.random() * altura)}px 0 ${tamanho}px #fff`);
+            }
+            const grupo = criar("span", { class: "estrelas" });
+            grupo.style.boxShadow = pontos.join(",");
+            grupo.style.animationDuration = (4 + g * 1.7) + "s";
+            grupo.style.animationDelay = (-g * 2) + "s";
+            fundo.append(grupo);
         }
 
-        const quantidade = window.innerWidth < 600 ? 8 : 14;
+        const quantidade = modoLeve ? 5 : 10;
         for (let i = 0; i < quantidade; i++) {
             const flor = criar("img", {
                 class: "flor",
@@ -1124,7 +1135,7 @@
     montarFundo();
     aplicar();
     setInterval(atualizarContador, 1000);
-    if (!reduzirMovimento) setInterval(criarCoracao, 450);
+    if (!reduzirMovimento) setInterval(criarCoracao, modoLeve ? 650 : 500);
 
     carregarFotosLocais().then(() => {
         if (fotosLocais.length) montarFotos();
