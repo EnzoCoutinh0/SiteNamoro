@@ -131,22 +131,33 @@
 
     function carregarConfig() {
         const doLink = configDoLink();
-        if (doLink) return { cfg: normalizar(doLink, BASE), origem: "link" };
+        if (doLink) {
+            const doLinkNorm = normalizar(doLink, BASE);
+            const local = configLocal();
+            const igualLocal = local && mesmaConfig(normalizar(local, BASE), doLinkNorm);
+            return { cfg: doLinkNorm, origem: igualLocal ? "local" : "link" };
+        }
         const local = configLocal();
         if (local) return { cfg: normalizar(local, BASE), origem: "local" };
         return { cfg: BASE, origem: "codigo" };
     }
 
-    // No link só vai o que é diferente do config.js, para ficar mais curto
-    function diferencasDaBase(cfg) {
-        const saida = {};
-        for (const chave of Object.keys(cfg)) {
-            if (JSON.stringify(cfg[chave]) !== JSON.stringify(BASE[chave])) saida[chave] = cfg[chave];
-        }
-        return saida;
+    // O link leva a configuração inteira, para a outra pessoa ver exatamente a sua versão
+    const mesmaConfig = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+    function linkDe(c) {
+        const base = location.origin + location.pathname;
+        return mesmaConfig(c, BASE) ? base : `${base}#c=${codificar(c)}`;
+    }
+
+    // Deixa o endereço da barra igual ao link de compartilhar
+    function colocarLinkNaBarra(c) {
+        const hash = mesmaConfig(c, BASE) ? "" : `#c=${codificar(c)}`;
+        history.replaceState(null, "", location.pathname + location.search + hash);
     }
 
     let { cfg, origem } = carregarConfig();
+    if (origem === "local") colocarLinkNaBarra(cfg);
 
     /* =====================================================================
        LINKS DE FOTOS E MÚSICAS
@@ -724,12 +735,16 @@
     });
 
     $("#compartilhar").addEventListener("click", async () => {
-        const dados = { title: cfg.titulo, text: "Olha o nosso contador ❤", url: location.href };
+        const link = linkDe(cfg);
+        const semFotosDoAparelho = fotosLocais.length ? " (as fotos do aparelho não vão junto)" : "";
         if (navigator.share) {
-            try { await navigator.share(dados); } catch { /* cancelado */ }
+            try {
+                await navigator.share({ title: cfg.titulo, text: "Olha o nosso contador ❤", url: link });
+                if (semFotosDoAparelho) avisar("Lembrete: as fotos do aparelho não vão no link");
+            } catch { /* cancelado */ }
             return;
         }
-        avisar(await copiar(location.href) ? "Link copiado!" : "Não consegui copiar o link");
+        avisar(await copiar(link) ? `Link copiado com as suas mudanças${semFotosDoAparelho}` : "Não consegui copiar o link");
     });
 
     /* =====================================================================
@@ -947,7 +962,7 @@
         e.preventDefault();
         const nova = lerPainel();
         const salvou = salvarLocal(nova);
-        limparLinkDaBarra();
+        colocarLinkNaBarra(nova);
         cfg = nova;
         origem = salvou ? "local" : origem;
         aplicar();
@@ -956,10 +971,7 @@
     });
 
     campo("pLink").addEventListener("click", async () => {
-        const nova = lerPainel();
-        const diferencas = diferencasDaBase(nova);
-        const base = location.origin + location.pathname;
-        const link = Object.keys(diferencas).length ? `${base}#c=${codificar(diferencas)}` : base;
+        const link = linkDe(lerPainel());
         const copiou = await copiar(link);
         if (location.protocol === "file:") {
             avisar("Link copiado, mas ele só funciona depois que o site estiver publicado (GitHub Pages)");
