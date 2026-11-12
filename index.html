@@ -3,257 +3,637 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b0306">
     <title>Nosso Tempo Juntos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;500&display=swap');
+        :root {
+            --rosa: #ff4d6d;
+            --rosa-claro: #ff8fa3;
+            --rosa-palido: #ffd6de;
+            --vinho: #2a0610;
+            --fundo: #0b0306;
+        }
+
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            padding: 0;
-            background-color: #000000;
             font-family: 'Poppins', sans-serif;
-            height: 100vh;
+            color: #fff;
+            background: var(--fundo);
+            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
+            padding: 24px 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ---------- Fundo: brilhos que se movem devagar ---------- */
+        .fundo {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
             overflow: hidden;
-            position: relative;
+            pointer-events: none;
+            background: radial-gradient(ellipse at 50% 120%, var(--vinho) 0%, var(--fundo) 65%);
         }
 
-        .container {
-            position: relative;
-            z-index: 10;
-            background: rgba(15, 15, 15, 0.85);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(255, 0, 50, 0.3);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            backdrop-filter: blur(10px);
-            color: #ffffff;
-        }
-
-        .container::-webkit-scrollbar {
-            display: none;
-        }
-
-        h1 {
-            font-family: 'Dancing Script', cursive;
-            color: #ff4757;
-            font-size: 3.2rem;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 10px rgba(255, 71, 87, 0.5);
-        }
-
-        .counter-box {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .time {
-            background: rgba(255, 71, 87, 0.15);
-            color: #ffcccc;
-            padding: 10px 15px;
-            border-radius: 10px;
-            border: 1px solid #ff4757;
-            font-size: 1.5rem;
-            font-weight: bold;
-            min-width: 60px;
-            box-shadow: 0 4px 15px rgba(255, 0, 50, 0.2);
-        }
-
-        .time span {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 300;
-            color: #ffffff;
-            margin-top: 5px;
-        }
-
-       /* Estilo do Carrossel de Fotos */
-        .slider-container {
-            position: relative;
-            width: 100%;
-            height: 350px; /* Aumentei um pouquinho a altura para ficar melhor para fotos em pé */
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            background-color: #000000; /* Fundo preto onde a foto não preencher */
-            border: 2px solid rgba(255, 71, 87, 0.2);
-            margin-bottom: 20px;
-        }
-
-        .slider-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* ESSA É A MÁGICA: mudamos de 'cover' para 'contain' */
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .btn {
+        .brilho {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #ff4757;
-            color: #ff4757;
-            font-size: 24px;
-            padding: 10px 15px;
-            cursor: pointer;
             border-radius: 50%;
-            transition: 0.3s;
+            filter: blur(80px);
+            opacity: 0.45;
+            animation: flutuar 18s ease-in-out infinite alternate;
+        }
+        .brilho.b1 { width: 45vmax; height: 45vmax; background: #c9184a; top: -15vmax; left: -10vmax; }
+        .brilho.b2 { width: 35vmax; height: 35vmax; background: #7b2cbf; bottom: -12vmax; right: -8vmax; animation-delay: -6s; opacity: 0.3; }
+        .brilho.b3 { width: 25vmax; height: 25vmax; background: #ff758f; top: 40%; left: 60%; animation-delay: -12s; opacity: 0.2; }
+
+        @keyframes flutuar {
+            0%   { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(6vmax, 4vmax) scale(1.15); }
         }
 
-        .btn:hover {
-            background: #ff4757;
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
+        .estrela {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: piscar ease-in-out infinite;
+        }
+        @keyframes piscar {
+            0%, 100% { opacity: 0.1; }
+            50%      { opacity: 0.9; }
         }
 
-        .prev { left: 10px; }
-        .next { right: 10px; }
+        .flor {
+            position: absolute;
+            opacity: 0.35;
+            filter: drop-shadow(0 0 12px rgba(255, 77, 109, 0.5));
+            animation: balancar ease-in-out infinite alternate;
+        }
+        @keyframes balancar {
+            from { transform: translateY(0) rotate(var(--r)); }
+            to   { transform: translateY(-18px) rotate(calc(var(--r) + 25deg)); }
+        }
 
-        .spotify-container {
-            width: 100%;
-            margin-top: 10px;
+        /* ---------- Corações caindo ---------- */
+        .camada-coracoes {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            overflow: hidden;
+            pointer-events: none;
         }
 
         .heart {
             position: absolute;
-            top: -10vh;
-            color: #ff0000;
-            font-size: 20px;
-            animation: fall linear forwards;
-            z-index: 5;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+            top: -40px;
+            line-height: 1;
+            will-change: transform;
+            animation: cair linear forwards;
+        }
+        .heart > i {
+            display: block;
+            font-style: normal;
+            animation: ondular ease-in-out infinite alternate;
+        }
+        @keyframes cair {
+            to { transform: translateY(calc(100vh + 80px)) rotate(var(--giro)); }
+        }
+        @keyframes ondular {
+            from { transform: translateX(-14px); }
+            to   { transform: translateX(14px); }
         }
 
-        @keyframes fall {
-            to {
-                transform: translateY(110vh) rotate(360deg);
-            }
-        }
-
-        .lily-bg {
-            position: absolute;
-            z-index: 1;
-            opacity: 0.6;
+        .estouro {
+            position: fixed;
+            z-index: 30;
             pointer-events: none;
+            line-height: 1;
+            animation: estourar 1s ease-out forwards;
+        }
+        @keyframes estourar {
+            0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(var(--giro)); opacity: 0; }
+        }
+
+        /* ---------- Cartão ---------- */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: min(500px, 92%);
+            padding: 36px 32px 28px;
+            text-align: center;
+            border-radius: 26px;
+            background: linear-gradient(160deg, rgba(40, 8, 18, 0.72), rgba(12, 4, 8, 0.82));
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.6),
+                0 0 50px rgba(255, 77, 109, 0.18),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            animation: entrar 1.1s cubic-bezier(.2, .8, .2, 1) both;
+        }
+
+        /* borda com brilho girando */
+        .container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            padding: 1.5px;
+            border-radius: inherit;
+            background: conic-gradient(from var(--angulo), rgba(255,77,109,.1), var(--rosa), rgba(255,214,222,.9), var(--rosa), rgba(255,77,109,.1) 60%, rgba(255,77,109,.1));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            animation: girar 6s linear infinite;
+            pointer-events: none;
+        }
+        @property --angulo {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+        @keyframes girar { to { --angulo: 360deg; } }
+
+        @keyframes entrar {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(6px); }
+            to   { opacity: 1; transform: none; filter: none; }
+        }
+
+        .aparecer { animation: subir 0.9s cubic-bezier(.2, .8, .2, 1) both; }
+        @keyframes subir {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.4rem, 9vw, 3.4rem);
+            line-height: 1.1;
+            margin: 0 0 6px;
+            background: linear-gradient(90deg, var(--rosa) 0%, var(--rosa-palido) 25%, var(--rosa) 50%, var(--rosa-claro) 75%, var(--rosa) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+                    background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 2px 12px rgba(255, 77, 109, 0.45));
+            animation: brilhar 6s linear infinite;
+        }
+        @keyframes brilhar { to { background-position: -200% center; } }
+
+        .subtitulo {
+            margin: 0 0 24px;
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--rosa-palido);
+            opacity: 0.85;
+            letter-spacing: 0.04em;
+        }
+        .batida {
+            display: inline-block;
+            color: var(--rosa);
+            animation: batimento 1.3s ease-in-out infinite;
+        }
+        @keyframes batimento {
+            0%, 40%, 100% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            28% { transform: scale(1.12); }
+        }
+
+        /* ---------- Contador ---------- */
+        .counter-box {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 26px;
+        }
+
+        .time {
+            position: relative;
+            padding: 14px 4px 10px;
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255, 77, 109, 0.2), rgba(255, 77, 109, 0.06));
+            border: 1px solid rgba(255, 77, 109, 0.45);
+            box-shadow: 0 6px 18px rgba(255, 0, 60, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+        .time:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(255, 0, 60, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .valor {
+            display: block;
+            font-size: clamp(1.25rem, 5.5vw, 1.7rem);
+            font-weight: 600;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 14px rgba(255, 77, 109, 0.6);
+        }
+        .valor.pulo { animation: pulo 0.45s cubic-bezier(.3, 1.6, .5, 1); }
+        @keyframes pulo {
+            0%   { transform: translateY(-40%); opacity: 0; }
+            100% { transform: none; opacity: 1; }
+        }
+
+        .rotulo {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.7rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--rosa-palido);
+        }
+
+        /* ---------- Fotos ---------- */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: clamp(260px, 42vh, 380px);
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 77, 109, 0.25);
+            margin-bottom: 18px;
+            touch-action: pan-y;
+        }
+
+        /* a própria foto, borrada, preenche as laterais */
+        .slider-fundo {
+            position: absolute;
+            inset: -30px;
+            background-size: cover;
+            background-position: center;
+            filter: blur(24px) brightness(0.55) saturate(1.3);
+            transition: background-image 0.6s;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0;
+            transform: scale(1.06);
+            transition: opacity 0.9s ease, transform 6s ease-out;
+        }
+        .slide.ativo {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .sem-foto {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--rosa-palido);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .sem-foto b { font-size: 2.5rem; color: var(--rosa); animation: batimento 1.3s ease-in-out infinite; }
+        .slider-container.vazio .sem-foto { display: flex; }
+
+        .btn {
+            position: absolute;
+            top: 50%;
+            z-index: 3;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 77, 109, 0.6);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 50%;
+            opacity: 0.75;
+            transition: background 0.3s, opacity 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .btn:hover, .btn:focus-visible {
+            opacity: 1;
+            background: var(--rosa);
+            box-shadow: 0 0 18px rgba(255, 77, 109, 0.7);
+            transform: translateY(-50%) scale(1.08);
+            outline: none;
+        }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+
+        .pontos {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+        }
+        .ponto {
+            width: 8px;
+            height: 8px;
+            padding: 0;
+            border: 0;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.45);
+            cursor: pointer;
+            transition: width 0.35s, background 0.35s;
+        }
+        .ponto.ativo { width: 22px; background: var(--rosa); box-shadow: 0 0 8px var(--rosa); }
+
+        /* ---------- Música ---------- */
+        .spotify-container {
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        }
+        .spotify-container iframe { display: block; border: 0; }
+
+        .dica {
+            margin: 16px 0 0;
+            font-size: 0.75rem;
+            font-weight: 300;
+            color: rgba(255, 214, 222, 0.55);
+        }
+
+        @media (max-width: 420px) {
+            .container { padding: 28px 18px 22px; border-radius: 22px; }
+            .slider-container { height: 300px; }
+            .counter-box { gap: 7px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .camada-coracoes { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Nosso Tempo Juntos</h1>
-        
-        <div class="counter-box">
-            <div class="time" id="days">00<span>Dias</span></div>
-            <div class="time" id="hours">00<span>Horas</span></div>
-            <div class="time" id="minutes">00<span>Minutos</span></div>
-            <div class="time" id="seconds">00<span>Segundos</span></div>
-        </div>
-
-        <div class="slider-container">
-            <button class="btn prev" onclick="mudarFoto(-1)">&#10094;</button>
-            <!-- AQUI FOI CORRIGIDO A FOTO INICIAL PARA A SUA PRIMEIRA FOTO -->
-           <img id="fotoSlider" src="Foto1.jpg" alt="Nossa Foto">
-            <button class="btn next" onclick="mudarFoto(1)">&#10095;</button>
-        </div>
-
-        <div class="spotify-container"> /musica spotify só colocar outra! /
-            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/0ZPquQV2aKmDfwPjvMdvRp?utm_source=generator&theme=0&si=ac2d63bfedf64c88" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        </div>
+    <div class="fundo" id="fundo" aria-hidden="true">
+        <div class="brilho b1"></div>
+        <div class="brilho b2"></div>
+        <div class="brilho b3"></div>
     </div>
+    <div class="camada-coracoes" id="coracoes" aria-hidden="true"></div>
+
+    <main class="container">
+        <h1>Nosso Tempo Juntos</h1>
+        <p class="subtitulo aparecer" style="animation-delay:.3s">
+            Juntos desde <span id="dataTexto"></span> <span class="batida">❤</span>
+        </p>
+
+        <div class="counter-box aparecer" style="animation-delay:.5s">
+            <div class="time"><span class="valor" id="days">0</span><span class="rotulo">Dias</span></div>
+            <div class="time"><span class="valor" id="hours">00</span><span class="rotulo">Horas</span></div>
+            <div class="time"><span class="valor" id="minutes">00</span><span class="rotulo">Minutos</span></div>
+            <div class="time"><span class="valor" id="seconds">00</span><span class="rotulo">Segundos</span></div>
+        </div>
+
+        <div class="slider-container aparecer" id="slider" style="animation-delay:.7s">
+            <div class="slider-fundo" id="sliderFundo"></div>
+            <div class="sem-foto"><b>❤</b>Coloque as fotos na pasta do site</div>
+            <button class="btn prev" type="button" onclick="mudarFoto(-1)" aria-label="Foto anterior">&#10094;</button>
+            <button class="btn next" type="button" onclick="mudarFoto(1)" aria-label="Próxima foto">&#10095;</button>
+            <div class="pontos" id="pontos"></div>
+        </div>
+
+        <!-- Música do Spotify: para trocar, cole aqui o link de "Incorporar faixa" de outra música -->
+        <div class="spotify-container aparecer" style="animation-delay:.9s">
+            <iframe data-testid="embed-iframe" src="https://open.spotify.com/embed/track/0ZPquQV2aKmDfwPjvMdvRp?utm_source=generator&theme=0&si=ac2d63bfedf64c88" width="100%" height="152" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Nossa música"></iframe>
+        </div>
+
+        <p class="dica aparecer" style="animation-delay:1.1s">Toque na tela para soltar corações</p>
+    </main>
 
     <script>
-        const dataInicio = new Date(2026, 5, 20, 0, 0, 0).getTime();
-
-        function atualizarContador() {
-            const agora = new Date().getTime();
-            const diferenca = agora - dataInicio;
-            const diffAbsoluta = Math.abs(diferenca);
-
-            const dias = Math.floor(diffAbsoluta / (1000 * 60 * 60 * 24));
-            const horas = Math.floor((diffAbsoluta % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutos = Math.floor((diffAbsoluta % (1000 * 60 * 60)) / (1000 * 60));
-            const segundos = Math.floor((diffAbsoluta % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerHTML = dias + "<span>Dias</span>";
-            document.getElementById("hours").innerHTML = (horas < 10 ? "0" + horas : horas) + "<span>Horas</span>";
-            document.getElementById("minutes").innerHTML = (minutos < 10 ? "0" + minutos : minutos) + "<span>Minutos</span>";
-            document.getElementById("seconds").innerHTML = (segundos < 10 ? "0" + segundos : segundos) + "<span>Segundos</span>";
-        }
-
-        setInterval(atualizarContador, 1000);
-        atualizarContador();
+        /* =========================================
+           DATA EM QUE COMEÇOU (ano, mês - 1, dia)
+           Junho = 5, porque janeiro é 0
+           ========================================= */
+        const inicio = new Date(2026, 5, 20, 0, 0, 0);
 
         /* =========================================
-           AQUI ESTÁ A LISTA DE FOTOS
+           LISTA DE FOTOS (na mesma pasta do index.html)
            ========================================= */
         const fotos = [
             "Foto1.jpg",
             "Foto2.jpg",
             "Foto3.jpg",
-            
-
         ];
-        
-        let indiceAtual = 0;
-        const elementoFoto = document.getElementById("fotoSlider");
 
-        function mudarFoto(direcao) {
-            indiceAtual += direcao;
-            if (indiceAtual >= fotos.length) indiceAtual = 0;
-            if (indiceAtual < 0) indiceAtual = fotos.length - 1;
+        const trocaAutomatica = 5000; // tempo entre as fotos, em milissegundos
 
-            elementoFoto.style.opacity = 0;
-            setTimeout(() => {
-                elementoFoto.src = fotos[indiceAtual];
-                elementoFoto.style.opacity = 1;
-            }, 200);
+        const reduzirMovimento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* ---------- Contador ---------- */
+        document.getElementById("dataTexto").textContent = inicio.toLocaleDateString("pt-BR");
+
+        const campos = {
+            days: document.getElementById("days"),
+            hours: document.getElementById("hours"),
+            minutes: document.getElementById("minutes"),
+            seconds: document.getElementById("seconds"),
+        };
+
+        function definir(el, texto) {
+            if (el.textContent === texto) return;
+            el.textContent = texto;
+            el.classList.remove("pulo");
+            void el.offsetWidth; // reinicia a animação
+            el.classList.add("pulo");
         }
+
+        const doisDigitos = n => String(n).padStart(2, "0");
+
+        function atualizarContador() {
+            const diff = Math.abs(Date.now() - inicio.getTime());
+            definir(campos.days, String(Math.floor(diff / 86400000)));
+            definir(campos.hours, doisDigitos(Math.floor(diff % 86400000 / 3600000)));
+            definir(campos.minutes, doisDigitos(Math.floor(diff % 3600000 / 60000)));
+            definir(campos.seconds, doisDigitos(Math.floor(diff % 60000 / 1000)));
+        }
+        setInterval(atualizarContador, 1000);
+        atualizarContador();
+
+        /* ---------- Fotos ---------- */
+        const slider = document.getElementById("slider");
+        const sliderFundo = document.getElementById("sliderFundo");
+        const pontos = document.getElementById("pontos");
+        const imagens = [];
+        let indiceAtual = 0;
+        let carregadas = 0;
+        let timer;
+
+        fotos.forEach((src, i) => {
+            const img = document.createElement("img");
+            img.className = "slide";
+            img.alt = "Nossa foto " + (i + 1);
+            img.src = src;
+            img.addEventListener("load", () => { carregadas++; slider.classList.remove("vazio"); if (i === indiceAtual) mostrar(i); });
+            img.addEventListener("error", () => { img.dataset.erro = "1"; verificarVazio(); });
+            slider.insertBefore(img, slider.querySelector(".btn"));
+            imagens.push(img);
+
+            const ponto = document.createElement("button");
+            ponto.className = "ponto";
+            ponto.type = "button";
+            ponto.setAttribute("aria-label", "Ver foto " + (i + 1));
+            ponto.onclick = () => irPara(i);
+            pontos.appendChild(ponto);
+        });
+
+        function verificarVazio() {
+            if (carregadas === 0 && imagens.every(img => img.dataset.erro)) slider.classList.add("vazio");
+        }
+
+        function mostrar(i) {
+            imagens.forEach((img, j) => img.classList.toggle("ativo", j === i));
+            [...pontos.children].forEach((p, j) => p.classList.toggle("ativo", j === i));
+            if (!imagens[i].dataset.erro) sliderFundo.style.backgroundImage = `url("${fotos[i]}")`;
+        }
+
+        function irPara(i) {
+            if (!imagens.length) return;
+            indiceAtual = (i + imagens.length) % imagens.length;
+            mostrar(indiceAtual);
+            reiniciarTimer();
+        }
+
+        function mudarFoto(direcao) { irPara(indiceAtual + direcao); }
+
+        function reiniciarTimer() {
+            clearInterval(timer);
+            if (imagens.length > 1 && !reduzirMovimento) timer = setInterval(() => mudarFoto(1), trocaAutomatica);
+        }
+
+        mostrar(0);
+        reiniciarTimer();
+
+        // arrastar para o lado no celular
+        let toqueX = null;
+        slider.addEventListener("touchstart", e => { toqueX = e.touches[0].clientX; }, { passive: true });
+        slider.addEventListener("touchend", e => {
+            if (toqueX === null) return;
+            const dx = e.changedTouches[0].clientX - toqueX;
+            if (Math.abs(dx) > 40) mudarFoto(dx < 0 ? 1 : -1);
+            toqueX = null;
+        });
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "ArrowRight") mudarFoto(1);
+            if (e.key === "ArrowLeft") mudarFoto(-1);
+        });
+
+        /* ---------- Corações caindo ---------- */
+        const camada = document.getElementById("coracoes");
+        const simbolos = ["❤", "❤", "❤", "💗", "💕", "💖"];
+        const cores = ["#ff4d6d", "#ff758f", "#c9184a", "#ff8fa3", "#ffb3c1"];
+        const sorteio = lista => lista[Math.floor(Math.random() * lista.length)];
 
         function criarCoracao() {
+            if (document.hidden) return;
             const coracao = document.createElement("div");
-            coracao.classList.add("heart");
-            coracao.innerHTML = "❤";
-            
+            const dentro = document.createElement("i");
+            const tamanho = Math.random() * 18 + 10;
+            const duracao = Math.random() * 4 + 5;
+
+            coracao.className = "heart";
+            dentro.textContent = sorteio(simbolos);
+            dentro.style.animationDuration = (Math.random() * 1.5 + 1.5) + "s";
             coracao.style.left = Math.random() * 100 + "vw";
-            coracao.style.fontSize = Math.random() * 20 + 10 + "px";
-            coracao.style.animationDuration = Math.random() * 3 + 3 + "s";
+            coracao.style.fontSize = tamanho + "px";
+            coracao.style.color = sorteio(cores);
+            coracao.style.opacity = (Math.random() * 0.5 + 0.4).toFixed(2);
+            coracao.style.filter = `drop-shadow(0 0 ${tamanho / 2}px rgba(255, 77, 109, .7))`;
+            coracao.style.animationDuration = duracao + "s";
+            coracao.style.setProperty("--giro", (Math.random() * 120 - 60) + "deg");
 
-            document.body.appendChild(coracao);
-
-            setTimeout(() => {
-                coracao.remove();
-            }, 6000);
+            coracao.appendChild(dentro);
+            camada.appendChild(coracao);
+            setTimeout(() => coracao.remove(), duracao * 1000);
         }
-        setInterval(criarCoracao, 300);
+        if (!reduzirMovimento) setInterval(criarCoracao, 450);
 
-        function espalharLirios() {
-            const quantidadeDeLirios = 15; 
+        /* ---------- Toque na tela: explosão de corações ---------- */
+        document.addEventListener("pointerdown", e => {
+            if (e.target.closest("button, iframe, a")) return;
+            const qtd = 12;
+            for (let i = 0; i < qtd; i++) {
+                const c = document.createElement("div");
+                const angulo = (Math.PI * 2 * i) / qtd + Math.random() * 0.4;
+                const distancia = Math.random() * 60 + 50;
+                c.className = "estouro";
+                c.textContent = sorteio(simbolos);
+                c.style.left = e.clientX + "px";
+                c.style.top = e.clientY + "px";
+                c.style.color = sorteio(cores);
+                c.style.fontSize = (Math.random() * 12 + 14) + "px";
+                c.style.setProperty("--dx", Math.cos(angulo) * distancia + "px");
+                c.style.setProperty("--dy", Math.sin(angulo) * distancia + "px");
+                c.style.setProperty("--giro", (Math.random() * 90 - 45) + "deg");
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 1000);
+            }
+        });
 
-            for (let i = 0; i < quantidadeDeLirios; i++) {
-                const lirio = document.createElement("img");
-                lirio.src = "https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/512/emoji_u1f33a.png"; 
-                lirio.classList.add("lily-bg");
-                lirio.style.left = Math.random() * 100 + "vw";
-                lirio.style.top = Math.random() * 100 + "vh";
-                lirio.style.width = (Math.random() * 60 + 40) + "px";
-                lirio.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
-                document.body.appendChild(lirio);
+        /* ---------- Fundo: estrelas e flores ---------- */
+        const fundo = document.getElementById("fundo");
+
+        for (let i = 0; i < 70; i++) {
+            const estrela = document.createElement("span");
+            estrela.className = "estrela";
+            estrela.style.left = Math.random() * 100 + "%";
+            estrela.style.top = Math.random() * 100 + "%";
+            estrela.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            estrela.style.animationDelay = (-Math.random() * 5) + "s";
+            if (Math.random() < 0.2) { estrela.style.width = estrela.style.height = "3px"; }
+            fundo.appendChild(estrela);
+        }
+
+        function espalharFlores() {
+            const quantidade = window.innerWidth < 600 ? 8 : 14;
+            for (let i = 0; i < quantidade; i++) {
+                const flor = document.createElement("img");
+                flor.src = "https://raw.githubusercontent.com/googlefonts/noto-emoji/main/png/512/emoji_u1f33a.png";
+                flor.alt = "";
+                flor.className = "flor";
+                flor.style.left = Math.random() * 95 + "vw";
+                flor.style.top = Math.random() * 95 + "vh";
+                flor.style.width = (Math.random() * 50 + 35) + "px";
+                flor.style.setProperty("--r", (Math.random() * 360) + "deg");
+                flor.style.animationDuration = (Math.random() * 4 + 5) + "s";
+                flor.style.animationDelay = (-Math.random() * 5) + "s";
+                flor.onerror = () => flor.remove();
+                fundo.appendChild(flor);
             }
         }
-        espalharLirios();
-
+        espalharFlores();
     </script>
 </body>
 </html>
